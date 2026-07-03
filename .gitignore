@@ -1,0 +1,23 @@
+# Ignore OpenFOAM time step output directories (e.g. 0.3, 50, etc.)
+[0-9]*
+!0_org/
+!0_org/**
+
+# Ignore parallel partitions and dynamic code compilations
+processor*/
+postProcessing/
+dynamicCode/
+
+# Ignore log files
+*.log
+log
+log.*
+
+# Ignore other large visualization or csv data
+VTK/
+scour_csv/
+
+# Ignore Foam files
+*.foam
+foam.foam
+*.orig

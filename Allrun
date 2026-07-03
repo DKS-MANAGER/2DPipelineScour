@@ -15,4 +15,4 @@ cp -r 0_org 0
 decomposePar
 
 # Run sedFoam in parallel
-mpirun -np 8 sedFoam_rbgh -parallel > log&
+mpirun -np 16 sedFoam_rbgh -parallel > log&
