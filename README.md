@@ -8,12 +8,12 @@ This case serves as the physical baseline and validation standard for the moving
 
 ## 📌 Project Overview & Physical Setup
 
-The goal of this simulation is to resolve the detailed fluid-sediment mechanics and scour development underneath a pipeline cylinder using a complete two-phase Eulerian description. 
+The goal of this simulation is to resolve the detailed fluid-sediment mechanics and scour development underneath a pipeline cylinder using a complete two-phase Eulerian description.
 
 ### Baseline Geometry
 * **Simulation Domain**: $x \in [-0.75, 1.0]\text{ m}$, $y \in [-0.1, 0.205]\text{ m}$.
 * **Initial Erodible Bed**: Horizontal interface located at $y = -0.025\text{ m}$.
-* **Pipeline Cylinder**: Diameter $D = 0.05\text{ m}$, fixed rigid position with a gap-to-diameter ratio $e/D = 0.02$ (cylinder center located at $x = 0.0\text{ m}$, $y = 0.0255\text{ m}$).
+* **Pipeline Cylinder**: Diameter $D = 0.05\text{ m}$, fixed rigid position. Gap $e = 0.010\text{ m}$, gap-to-diameter ratio $e/D = 0.2$. Cylinder center located at $x = 0.0\text{ m}$, $y = 0.010\text{ m}$ (applied via `translateVector (0 0.010 0)` transform in `snappyHexMeshDict`; STL geometry is centered at origin).
 * **Mesh Resolution**: Fine mesh around the cylinder and along the seabed to capture granular shear, vortex shedding, and scour velocity gradients.
 
 ### Fluid & Sediment Properties
@@ -54,6 +54,31 @@ The simulation is configured to run in parallel using MPI decomposition.
      ```bash
      mpirun -np 16 sedFoam_rbgh -parallel > log 2>&1 &
      ```
+
+---
+
+## 🔧 Geometry & Gap Configuration
+
+The cylinder STL (`constant/triSurface/Cylinder.stl`) is defined with its center at the origin $(0, 0)$ with $R = 0.025\text{ m}$.  
+The physical position in the mesh is controlled entirely via the `transform` block in `system/snappyHexMeshDict`:
+
+```
+Cylinder.stl
+{
+    type triSurfaceMesh;
+    name cylinder;
+    transform
+    {
+        translateVector (0 0.010 0);
+    }
+}
+```
+
+To change the gap $e$, only update the `translateVector` y-component:
+
+$$y_{\text{translate}} = y_{\text{bed}} + R + e = -0.025 + 0.025 + e = e$$
+
+So `translateVector y = e` directly. Also update the `surface1` near-cylinder refinement box `min`/`max` y-bounds to follow the new cylinder position.
 
 ---
 
