@@ -1,10 +1,29 @@
 # 2DPipelineScour: Eulerian-Eulerian Two-Phase SedFoam Reference Case
 
+
+
 This repository contains the reference case setup for **2D Pipeline Scour** around a cylinder on an erodible bed, simulated using the two-fluid Eulerian-Eulerian **SedFoam** solver (compiled as `sedFoam_rbgh`) in OpenFOAM.
 
 This case serves as the physical baseline and validation standard for the moving-mesh, finite-area morphodynamics transition solver (`sedExnerFoam`).
 
 ---
+## Prerequisites
+* OpenFOAM v[Version] / SedFoam (`sedFoam_rbgh`)
+* Python 3.x (numpy, pandas)
+
+## Physical Setup
+* **Domain**: x: [-0.75, 1.0] m, y: [-0.1, 0.205] m.
+* **Bed**: Horizontal interface at y = -0.025 m. Porosity 0.40, hindrance exponent 2.65.
+* **Cylinder**: D = 0.05 m, fixed. Gap e = 0.010 m (e/D = 0.2). Center at x = 0.0 m, y = 0.010 m.
+* **Fluid**: Density 1000 kg/m3, kinematic viscosity 1e-6 m2/s.
+* **Sediment**: Quartz sand. Density 2650 kg/m3, d50 = 0.36 mm.
+* **Physics**: Wilcox twophasekOmega, kinetic granular stress, mesh diffusion.
+
+## Execution
+``` bash
+./Allclean
+./Allrun
+```
 
 ## 📌 Project Overview & Physical Setup
 
@@ -97,6 +116,3 @@ This directory includes custom Python scripts to post-process the OpenFOAM data 
 
 ---
 
-## 🔧 Git Actions (Local Only)
-
-All case configuration files, mesh dictionaries, and processing utilities are tracked and committed to the local Git repository. No external push is performed.
