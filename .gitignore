@@ -1,0 +1,13 @@
+processor*/
+postProcessing/
+dynamicCode/
+*.foam
+foam.foam
+log.*
+*.log
+*.orig
+0/
+[0-9]*/
+[0-9]*.[0-9]*/
+constant/polyMesh/sets/
+constant/faMesh/

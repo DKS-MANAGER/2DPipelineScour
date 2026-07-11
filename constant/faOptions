@@ -1,0 +1,28 @@
+/*---------------------------------------------------------------------------*\
+  Project     : 2D Pipeline Scour Morphodynamics
+  Author      : Divyansh Kumar Singh
+  Level       : Postgraduate Research
+  Description : Simulation of hydrodynamics and morphodynamic scour around
+                a pipeline using the sedExnerFoam solver.
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      faOptions;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+//
+// faOptions — finite-area source terms for sedExnerFoam.
+//
+// Physical model definitions (bedload formula, slope correction, avalanche)
+// are specified in bedloadProperties and exnerProperties — NOT here.
+// This file previously contained duplicate model entries that conflicted
+// with the primary dictionaries. Cleared to avoid ambiguity.
+//
+// If needed, FA source terms (e.g., explicit sediment flux corrections,
+// custom bed filter sources) can be added here.
+
+// ************************************************************************* //

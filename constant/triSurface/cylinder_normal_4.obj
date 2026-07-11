@@ -1,0 +1,20 @@
+# Wavefront OBJ file written 2026-07-04T15:10:05
+o cylinder_normal_4
+
+# points : 4
+# faces  : 2
+# zones  : 1
+#   0  patch0  (nFaces: 2)
+
+# <points count="4">
+v -0.0135513 -0.0210086 -5
+v -0.0127658 -0.021495 -5
+v -0.0119628 -0.021952 -5
+v -0.0111435 -0.0223791 -5
+# </points>
+
+# <faces count="2">
+g patch0
+f 4 1 2
+f 4 2 3
+# </faces>

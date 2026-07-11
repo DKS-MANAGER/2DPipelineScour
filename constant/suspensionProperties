@@ -1,0 +1,40 @@
+/*---------------------------------------------------------------------------*\
+  Project     : 2D Pipeline Scour Morphodynamics
+  Author      : Divyansh Kumar Singh
+  Level       : Postgraduate Research
+  Description : Simulation of hydrodynamics and morphodynamic scour around
+                a pipeline using the sedExnerFoam solver.
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      suspensionProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+suspension         on;
+
+fallModel
+{
+    type           Fredsoe;
+}
+
+hindranceModel
+{
+    type           none;
+}
+
+diffusivity        turbulent;
+
+wallDiffusivity
+{
+    alpha          5e-6;
+    beta           5;
+}
+
+CsbMax             0.6;
+
+// ************************************************************************* //

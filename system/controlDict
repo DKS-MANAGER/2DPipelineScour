@@ -1,0 +1,79 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2412                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+/*---------------------------------------------------------------------------*\
+  Project     : 2D Pipeline Scour Morphodynamics
+  Author      : Divyansh Kumar Singh
+  Level       : Postgraduate Research
+  Description : Simulation of hydrodynamics and morphodynamic scour around
+                a pipeline using the sedExnerFoam solver.
+\*---------------------------------------------------------------------------*/
+// PHASE 2 controlDict — copy over system/controlDict after spin-up.
+// Usage (after Phase 1 reaches t=2s):
+//   cp system/controlDict_phase2 system/controlDict
+//   cp constant/bedloadProperties_phase2 constant/bedloadProperties
+//   sedExnerFoam 2>&1 | tee log.sedExnerFoam_phase2
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+
+application         sedExnerFoam;
+
+startFrom           latestTime;
+startTime           0;
+stopAt              endTime;
+endTime             10;
+
+deltaT              1e-4;
+
+writeControl        adjustableRunTime;
+writeInterval       0.5;
+
+purgeWrite          0;
+writeFormat         binary;
+writePrecision      6;
+writeCompression    false;
+timeFormat          general;
+timePrecision       6;
+runTimeModifiable   yes;
+adjustTimeStep      yes;
+maxCo               0.8;
+maxDeltaT           1e-3;
+
+
+libs
+(
+    "libsedimentBed.so"
+    "libbedloadModels.so"
+    "libcriticalShieldsModels.so"
+    "libroughWallFunctions.so"
+    "libsettlingModels.so"
+    "libprojectedFiniteArea.so"
+);
+
+functions
+{
+    scourDepth
+    {
+        type            surfaceFieldValue;
+        libs            ("libfieldFunctionObjects.so");
+        writeControl    writeTime;
+        log             yes;
+        writeFields     no;
+        regionType      patch;
+        name            bottom;
+        operation       min;
+        fields          (pointDisplacement);
+    }
+}
+
+// ************************************************************************* //

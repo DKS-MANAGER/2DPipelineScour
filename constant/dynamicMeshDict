@@ -1,0 +1,41 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2412                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+/*---------------------------------------------------------------------------*\
+  Project     : 2D Pipeline Scour Morphodynamics
+  Author      : Divyansh Kumar Singh
+  Level       : Postgraduate Research
+  Description : Simulation of hydrodynamics and morphodynamic scour around
+                a pipeline using the sedExnerFoam solver.
+\*---------------------------------------------------------------------------*/
+// PHASE 2 dynamicMeshDict (bedMotion on, active scour).
+// Copy to constant/dynamicMeshDict before starting phase 2 run.
+//
+// inverseDistance references 'bottom' (the actual faMesh/bed patch name).
+// This diffuses bed deformation upward: cells near bottom deform most,
+// upper fluid cells near free surface barely move.
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      dynamicMeshDict;
+}
+
+dynamicFvMesh       dynamicMotionSolverFvMesh;
+
+motionSolverLibs    ("libfvMotionSolvers.so");
+
+motionSolver        displacementLaplacian;
+
+displacementLaplacianCoeffs
+{
+    diffusivity     inverseDistance 2 (bottom cylinder);
+}
+
+// ************************************************************************* //

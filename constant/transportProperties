@@ -1,0 +1,55 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2412                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+/*---------------------------------------------------------------------------*\
+  Project     : 2D Pipeline Scour Morphodynamics
+  Author      : Divyansh Kumar Singh
+  Level       : Postgraduate Research
+  Description : Simulation of hydrodynamics and morphodynamic scour around
+                a pipeline using the sedExnerFoam solver.
+\*---------------------------------------------------------------------------*/
+// EXTRACTED from DKS-MANAGER/2DPipelineScour/constant/transportProperties
+// Fluid (phase b): rho=1000 kg/m3, nu=1e-6 m2/s
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      transportProperties;
+}
+
+transportModel  Newtonian;
+
+nu              nu [0 2 -1 0 0 0 0] 1e-6;
+
+rho             rho [1 -3 0 0 0 0 0] 1000;
+
+
+rhoS            rhoS [1 -3 0 0 0 0 0] 2650;
+
+dS              dS [0 1 0 0 0 0 0] 3.6e-4;
+
+porosity        porosity [0 0 0 0 0 0 0] 0.4;
+
+shields0        shields0 [0 0 0 0 0 0 0] 0.0473;
+
+morfac          morfac [0 0 0 0 0 0 0] 1;
+
+CsMax      CsMax [0 0 0 0 0 0 0] 0.6;
+
+Cs0        Cs0 [0 0 0 0 0 0 0] 0.0;
+
+kappa      kappa [0 0 0 0 0 0 0] 0.41;
+
+B          B [0 0 0 0 0 0 0] 9.0;
+
+Acoef      Acoef [0 0 0 0 0 0 0] 0.017;
+
+betaCoef   betaCoef [0 0 0 0 0 0 0] 1.0;
+
+// ************************************************************************* //

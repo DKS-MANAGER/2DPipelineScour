@@ -1,0 +1,101 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2412                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSchemes;
+}
+
+ddtSchemes
+{
+    default         Euler;
+}
+
+gradSchemes
+{
+    default             Gauss linear;
+    grad(U)             cellLimited Gauss linear 1;
+    grad(k)             cellLimited Gauss linear 1;
+    grad(omega)         cellLimited Gauss linear 1;
+    // FIX: limit Cs gradient — prevents steep scour-pit gradients
+    // from feeding unbounded values back into the linearUpwind U solver
+    grad(Cs)            cellLimited Gauss linear 1;
+}
+
+divSchemes
+{
+    default                              none;
+    div(phi,U)                           Gauss linearUpwind grad(U);
+    div(phi,k)                           Gauss linearUpwind grad(k);
+    div(phi,omega)                       Gauss linearUpwind grad(omega);
+    div(phi,Cs)                          Gauss upwind;
+    div(phip,Cs)                         Gauss upwind;
+    div(phi,Ws)                          Gauss upwind;
+    div((nuEff*dev(T(grad(U)))))         Gauss linear;
+    div((nuEff*dev2(T(grad(U)))))        Gauss linear;
+    div(yPhi,yWall)                      Gauss upwind;
+}
+
+laplacianSchemes
+{
+    default                                  Gauss linear corrected;
+    laplacian(nuEff,U)                       Gauss linear corrected;
+    laplacian((1|A(U)),p_rgh)                Gauss linear corrected;
+    laplacian((1|A(U)),p)                    Gauss linear corrected;
+    laplacian(DkEff,k)                       Gauss linear corrected;
+    laplacian(DomegaEff,omega)               Gauss linear corrected;
+    // FIX: switch cellDisplacement laplacian from 'corrected' to 'limited 0.5'
+    // Log showed mesh vertices hitting ±1e+300. On a deforming non-orthogonal
+    // mesh, 'corrected' adds an unbounded explicit non-orthogonal correction.
+    // 'limited 0.5' blends corrected and uncorrected — stays bounded even
+    // when non-orthogonality grows large in the scour pit region.
+    laplacian(diffusivity,cellDisplacement)  Gauss linear limited 0.5;
+}
+
+interpolationSchemes
+{
+    default         linear;
+}
+
+snGradSchemes
+{
+    // FIX: same reasoning as cellDisplacement laplacian above.
+    // 'corrected' is unbounded on high-non-orthogonality cells.
+    // 'limited 0.5' is bounded and stable on the deforming scour mesh.
+    default         limited corrected 0.5;
+}
+
+fluxRequired
+{
+    default     no;
+    p_rgh       ;
+    p           ;
+    pcorr       ;
+}
+
+wallDist
+{
+    // FIX: switch from meshWave to advectionDiffusion.
+    // meshWave uses topological (face-connectivity) distance — inaccurate
+    // near the scour pit where the shortest topological path diverges from
+    // the geometric wall distance. Wrong y+ fed into omegaWallFunction
+    // caused 'bounding omega min=-136206' seen in the log.
+    // advectionDiffusion uses geometric distance — correct on deforming meshes.
+    method      advectionDiffusion;
+    advectionDiffusionCoeffs
+    {
+        method      meshWave;       // seed points still from meshWave
+        tolerance   1e-3;
+        maxIter     5;
+    }
+}
+
+// ************************************************************************* //

@@ -1,0 +1,48 @@
+#!/bin/bash
+set -e
+
+. "$WM_PROJECT_DIR/bin/tools/RunFunctions"
+
+echo "=== Meshing ==="
+blockMesh > log.blockMesh 2>&1
+surfaceFeatureExtract > log.surfaceFeatureExtract 2>&1
+topoSet > log.topoSet 2>&1
+cp system/decomposeParDict.mesh system/decomposeParDict
+decomposePar -force > log.decomposePar.mesh 2>&1
+
+mpirun -np 6 snappyHexMesh -parallel -overwrite > log.snappyHexMesh 2>&1
+
+reconstructParMesh -constant > log.reconstructParMesh.constant 2>&1
+# rm -rf processor*
+
+echo "=== Finite-area mesh ==="
+extrudeMesh > log.extrudeMesh 2>&1
+topoSet > log.topoSet 2>&1
+makeFaMesh > log.makeFaMesh 2>&1
+
+cp -r 0_org 0
+rm -f 0/cellLevel 0/pointLevel 0/cellDist
+
+cp system/decomposeParDict.run system/decomposeParDict
+decomposePar -force > log.decomposePar.run 2>&1
+
+echo "=== Copying finite-area fields ==="
+./copyFA.sh
+
+echo "=== Phase 1 ==="
+# sed -i 's/endTime.*/endTime          2.0;/' system/controlDict
+sed -i 's/morphoAccFactor.*/morphoAccFactor   0.005;/' constant/bedloadProperties
+sed -i 's/avalanche.*/avalanche         off;/' constant/bedloadProperties
+mpirun -np 6 sedExnerFoam -parallel > log.phase1 2>&1
+
+echo "=== Phase 2 ==="
+#sed -i 's/endTime.*/endTime          10.0;/' system/controlDict
+sed -i 's/morphoAccFactor.*/morphoAccFactor   0.1;/' constant/bedloadProperties
+sed -i 's/avalanche.*/avalanche         on;/' constant/bedloadProperties
+mpirun -np 6 sedExnerFoam -parallel > log.phase2 2>&1
+
+echo "=== Reconstructing results ==="
+reconstructParMesh -latestTime > log.reconstructParMesh 2>&1
+reconstructPar > log.reconstructPar 2>&1
+
+rm -rf processor*

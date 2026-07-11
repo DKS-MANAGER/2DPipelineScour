@@ -1,0 +1,81 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2412                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+/*---------------------------------------------------------------------------*\
+  Project     : 2D Pipeline Scour Morphodynamics
+  Author      : Divyansh Kumar Singh
+  Level       : Postgraduate Research
+  Description : Simulation of hydrodynamics and morphodynamic scour around
+                a pipeline using the sedExnerFoam solver.
+\*---------------------------------------------------------------------------*/
+// PHASE 2 bedloadProperties — copy over constant/bedloadProperties
+// AFTER spin-up (t=2s) completes successfully.
+// Usage:
+//   cp constant/bedloadProperties_phase2 constant/bedloadProperties
+//   cp system/controlDict_phase2 system/controlDict
+//   cp system/dynamicMeshDict_phase2 system/dynamicMeshDict
+//   # edit system/fvSolution: correctPhi yes, moveMeshOuterCorrectors yes
+//   sedExnerFoam 2>&1 | tee log.sedExnerFoam_phase2
+FoamFile {
+  version 2.0;
+  format ascii;
+  class dictionary;
+  location "constant";
+  object bedloadProperties;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+sedimentBed on;
+sedimentBedPatches (bottom);
+
+// PHASE 2: bed motion ON — Exner drives mesh deformation
+bedMotion on;
+
+// Adams-Bashforth order 0 — safe for restart without dVsed saved to disk
+ABorder 0;
+
+fixedFaPatches();
+
+// SATURATION: 'explicit' with Lsat/Tsat for Phase 2 stability.
+// Renaud et al. 2026, Sec 5.2.3: "essential for stable simulations"
+// Lsat = ~14×d50 = 5e-3 m, Tsat = 0.01 s.
+saturationType explicit;
+Lsat 5e-3;
+Tsat 0.01;
+
+bedloadModel {
+  type Nielsen;
+  alpha 7.2;
+  aExp 0.5;
+  bExp 1;
+  slopeCorrecton off;
+  gamma 0.1;
+  avalanche         on;
+  Qav 1e-3;
+  alphaFiltBeta 0.1;
+  NfiltBeta 1;
+  coefShields 1;
+}
+
+criticalShieldsModel {
+  type Soulsby;
+  slopeCorrection on;
+}
+
+// morphoAccFactor   0.1;
+// The tangency issue that caused extreme mesh deformation crashes has been
+// resolved.
+morphoAccFactor   0.1;
+
+filterExner on;
+alphaFiltExner 0.3;
+NfiltExner 5;
+
+rigidBed off;
+
+// ************************************************************************* //

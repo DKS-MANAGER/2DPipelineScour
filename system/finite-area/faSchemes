@@ -1,0 +1,64 @@
+/*---------------------------------------------------------------------------*\
+  Project     : 2D Pipeline Scour Morphodynamics
+  Author      : Divyansh Kumar Singh
+  Level       : Postgraduate Research
+  Description : Simulation of hydrodynamics and morphodynamic scour around
+                a pipeline using the sedExnerFoam solver.
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      faSchemes;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+//
+// Finite-area discretisation schemes for the Exner bed-elevation equation.
+// sedExnerFoam reads this file directly from system/finite-area/faSchemes.
+// The embedded faSchemes {} block that was previously inside fvSchemes is
+// REMOVED — it was silently ignored by the solver.
+
+ddtSchemes
+{
+    // AdamsBashforth is second-order explicit in time.
+    // More accurate than Euler for bed elevation evolution.
+    // Stable as long as the bed Courant number Co_bed < 1
+    // (guaranteed by maxBedLevelChange in sedimentProperties).
+    default         AdamsBashforth;
+}
+
+gradSchemes
+{
+    default         Gauss linear;
+}
+
+divSchemes
+{
+    default         none;
+
+    // Bedload flux divergence — upwind to prevent oscillations
+    // in q_b near the threshold (theta just above theta_c).
+    div(qs)         Gauss upwind;
+
+    // Avalanche redistribution flux — linear is stable here
+    // because qav is diffusive and self-limiting.
+    div(qav)        Gauss linear;
+}
+
+laplacianSchemes
+{
+    default         Gauss linear corrected;
+}
+
+interpolationSchemes
+{
+    default         linear;
+}
+
+lnGradSchemes
+{
+    default         corrected;
+}
+
+// ************************************************************************* //

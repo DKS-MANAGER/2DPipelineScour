@@ -1,0 +1,67 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2412                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+/*---------------------------------------------------------------------------*\
+  Project     : 2D Pipeline Scour Morphodynamics
+  Author      : Divyansh Kumar Singh
+  Level       : Postgraduate Research
+  Description : Simulation of hydrodynamics and morphodynamic scour around
+                a pipeline using the sedExnerFoam solver.
+\*---------------------------------------------------------------------------*/
+// sedExnerFoam morphodynamics configuration.
+//
+// EXNER EQUATION (solved on faMesh 'bottom' patch):
+//   (1 - n) * dz/dt + d(qs)/dx = 0
+//   => dz/dt = -1/(1-n) * d(qs)/dx
+//
+// BED SHEAR STRESS (from k-omega SST near-wall):
+//   ustar = Cmu^0.25 * sqrt(k_P)   [wall-function cell P]
+//   tau_b = rho * ustar^2
+//
+// NIELSEN (1992) BEDLOAD:
+//   theta  = tau_b / (rho*(s-1)*g*d50)
+//   qb*    = nielsenCoeff * sqrt(theta) * max(theta - thetaCr, 0)
+//   qb     = qb* * sqrt((s-1)*g*d50^3)
+//
+// SLOPE CORRECTION (Bagnold / van Rijn 1984):
+//   qb_corr = qb * (cos(beta) - sin(beta)/tan(phi_r))
+//   beta = local bed slope angle, phi_r = angleOfRepose
+//
+// AVALANCHE:
+//   if |grad(h)| > tan(phi_r): redistribute until slope = tan(phi_r)
+//   Applied as implicit smoothing (nAvalancheIter passes per timestep)
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      exnerProperties;
+}
+
+bedPatch            bottom;
+
+// Morphological acceleration: dz_actual = morphFac * dz_computed
+morphFac            morphFac [0 0 0 0 0 0 0] 1;
+
+// Bedload model: Nielsen1992 | MeyerPeterMuller | vanRijn
+bedloadModel        Nielsen1992;
+
+// Slope correction: BagnoldVanRijn | none
+slopeCorrectionModel BagnoldVanRijn;
+
+// Avalanche redistribution
+avalanching         on;
+nAvalancheIter      3;
+
+// Bed elevation bounds (m)
+bedZmin             bedZmin [0 1 0 0 0 0 0] -0.1;
+bedZmax             bedZmax [0 1 0 0 0 0 0]  0.01;
+
+// ************************************************************************* //
+
+bedMotion       on;

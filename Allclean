@@ -1,0 +1,27 @@
+#!/bin/sh
+# =============================================================================
+# Project     : 2D Pipeline Scour Morphodynamics
+# Author      : Divyansh Kumar Singh
+# Level       : Postgraduate Research
+# Description : Automation script for hydrodynamic spin-up and morphodynamic 
+#               scour execution across 6-core MPI decomposition.
+# =============================================================================
+#------------------------------------------------------------------------------
+# Allclean - sedExnerFoam case
+#------------------------------------------------------------------------------
+cd "${0%/*}" 2>/dev/null || true
+. "$WM_PROJECT_DIR/bin/tools/CleanFunctions" || true
+
+cleanCase
+rm -rf constant/polyMesh/sets
+rm -rf constant/faMesh
+rm -rf constant/polyMesh/boundary
+rm -rf constant/polyMesh/faces
+rm -rf constant/polyMesh/neighbour
+rm -rf constant/polyMesh/owner
+rm -rf constant/polyMesh/points
+rm -rf constant/polyMesh/pointZones
+rm -rf constant/polyMesh/faceZones
+rm -rf constant/polyMesh/cellZones
+rm -rf 0/finite-area
+rm -f  log.*
