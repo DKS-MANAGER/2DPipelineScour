@@ -5,52 +5,51 @@
 |   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
-FoamFile
-{
-    version     2.0;
-    format      ascii;
-    class       dictionary;
-    location    "system";
-    object      controlDict;
+FoamFile {
+  version 2.0;
+  format ascii;
+  class dictionary;
+  location "system";
+  object controlDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-application     sedFoam;
+application sedFoam;
 
-startFrom       startTime;
+startFrom startTime;
 
-startTime       0;
+startTime 0;
 
-stopAt          endTime;
+stopAt endTime;
 
-endTime         50;
+endTime 50;
 
-deltaT          1.e-2;
+deltaT 1.e-3;
 
-writeControl    adjustableRunTime;
+writeControl adjustableRunTime;
 
-writeInterval   0.5;
+writeInterval 0.5;
 
-purgeWrite      0;
+purgeWrite 0;
 
-writeFormat     binary;
+writeFormat binary;
 
-writePrecision  6;
+writePrecision 6;
 
 writeCompression false;
 
-timeFormat      general;
+timeFormat general;
 
-timePrecision   6;
+timePrecision 6;
 
 runTimeModifiable on;
 
-adjustTimeStep  yes;
+adjustTimeStep yes;
 
-maxCo           0.5;
+maxCo 0.5;
 
-maxAlphaCo      0.7;
+maxAlphaCo 0.7;
 
-maxDeltaT       15.e-1;
+maxDeltaT 15.e-1;
 
 // ************************************************************************* //
