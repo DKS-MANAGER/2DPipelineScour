@@ -1,5 +1,5 @@
 <?xml version='1.0'?>
-<!-- cylinder -->
+<!-- Cylinder -->
 <VTKFile type='PolyData' version='0.1' byte_order='LittleEndian' header_type='UInt64'>
   <PolyData>
     <Piece NumberOfPoints='340' NumberOfPolys='676'>

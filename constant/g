@@ -1,16 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  2412                                  |
-|   \\  /    A nd           | Website:  www.openfoam.com                      |
-|    \/     M anipulation  |                                                 |
-\*---------------------------------------------------------------------------*/
-/*---------------------------------------------------------------------------*\
-  Project     : 2D Pipeline Scour Morphodynamics
-  Author      : Divyansh Kumar Singh
-  Level       : Postgraduate Research
-  Description : Simulation of hydrodynamics and morphodynamic scour around
-                a pipeline using the sedExnerFoam solver.
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -20,8 +13,10 @@ FoamFile
     location    "constant";
     object      g;
 }
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions  [0 1 -2 0 0 0 0];
-value       (0 -9.81 0);
+dimensions      [0 1 -2 0 0 0 0];
+value           ( 0 -9.81 0 );
+
 
 // ************************************************************************* //

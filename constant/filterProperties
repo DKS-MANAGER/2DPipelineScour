@@ -10,47 +10,18 @@ FoamFile
     version     2.0;
     format      ascii;
     class       dictionary;
-    location    "system";
-    object      controlDict;
+    location    "constant";
+    object      filterProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-application     sedFoam;
+filter          off;
 
-startFrom       startTime;
+filterNormal    ( 0 0 1 );
 
-startTime       0;
+filterPosition  filterPosition [ 0 1 0 0 0 ] ( 0 0 0.02 );
 
-stopAt          endTime;
+filterThickness filterThickness [ 0 1 0 0 0 ] 1e-06;
 
-endTime         50;
-
-deltaT          1.e-2;
-
-writeControl    adjustableRunTime;
-
-writeInterval   0.5;
-
-purgeWrite      0;
-
-writeFormat     binary;
-
-writePrecision  6;
-
-writeCompression false;
-
-timeFormat      general;
-
-timePrecision   6;
-
-runTimeModifiable on;
-
-adjustTimeStep  yes;
-
-maxCo           0.5;
-
-maxAlphaCo      0.7;
-
-maxDeltaT       15.e-1;
 
 // ************************************************************************* //

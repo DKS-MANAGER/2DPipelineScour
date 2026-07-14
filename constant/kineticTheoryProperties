@@ -10,47 +10,39 @@ FoamFile
     version     2.0;
     format      ascii;
     class       dictionary;
-    location    "system";
-    object      controlDict;
+    location    "constant";
+    object      kineticTheoryProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-application     sedFoam;
+kineticTheory   off;
 
-startFrom       startTime;
+limitProduction off;
 
-startTime       0;
+extended        off;
 
-stopAt          endTime;
+e               e [ 0 0 0 0 0 0 0 ] 0.7;
 
-endTime         50;
+muPart          muPart [ 0 0 0 0 0 0 0 ] 0.4;
 
-deltaT          1.e-2;
+alphaMax        alphaMax [ 0 0 0 0 0 0 0 ] 0.6;
 
-writeControl    adjustableRunTime;
+MaxTheta       MaxTheta [ 0 2 -2 0 0 0 0 ] 0.01;
 
-writeInterval   0.5;
+phi             phi [ 0 0 0 0 0 0 0 ] 20.487; //mus = 0.35 = sin(phi*pi/180)
 
-purgeWrite      0;
+psi             psi [ 0 0 0 0 0 0 0 ] 0.0;
 
-writeFormat     binary;
+killJ2_       killJ2_ [ 0 0 0 0 0 0 0] 0;
 
-writePrecision  6;
+quadraticCorrectionJ1_ quadraticCorrectionJ1_ [ 0 0 0 0 0 0 0 ] 0;
 
-writeCompression false;
+viscosityModel  Syamlal;
 
-timeFormat      general;
+conductivityModel Syamlal;
 
-timePrecision   6;
+granularPressureModel Lun;
 
-runTimeModifiable on;
-
-adjustTimeStep  yes;
-
-maxCo           0.5;
-
-maxAlphaCo      0.7;
-
-maxDeltaT       15.e-1;
+radialModel     CarnahanStarling;
 
 // ************************************************************************* //

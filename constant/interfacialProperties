@@ -10,47 +10,16 @@ FoamFile
     version     2.0;
     format      ascii;
     class       dictionary;
-    location    "system";
-    object      controlDict;
+    location    "constant";
+    object      interfacialProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-application     sedFoam;
+dragModela      GidaspowSchillerNaumann;
 
-startFrom       startTime;
+dragModelb      GidaspowSchillerNaumann;
 
-startTime       0;
+dragPhase       a;
 
-stopAt          endTime;
-
-endTime         50;
-
-deltaT          1.e-2;
-
-writeControl    adjustableRunTime;
-
-writeInterval   0.5;
-
-purgeWrite      0;
-
-writeFormat     binary;
-
-writePrecision  6;
-
-writeCompression false;
-
-timeFormat      general;
-
-timePrecision   6;
-
-runTimeModifiable on;
-
-adjustTimeStep  yes;
-
-maxCo           0.5;
-
-maxAlphaCo      0.7;
-
-maxDeltaT       15.e-1;
 
 // ************************************************************************* //

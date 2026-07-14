@@ -1,14 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  2412                                  |
-|   \\  /    A nd           | Website:  www.openfoam.com                      |
-|    \/     M anipulation  |                                                 |
-\*---------------------------------------------------------------------------*/
-/*---------------------------------------------------------------------------*\
-  Project     : 2D Pipeline Scour Morphodynamics
-  Author      : Divyansh Kumar Singh
-  Level       : Postgraduate Research
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -18,174 +13,139 @@ FoamFile
     location    "system";
     object      fvSolution;
 }
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 solvers
 {
-    cellDisplacement
+    p_rbgh
     {
         solver          GAMG;
-        smoother        GaussSeidel;
+        tolerance       1e-06;
+        relTol          0.0001;
+        smoother        DIC;
+        nPreSweeps      0;
+        nPostSweeps     2;
+        nFinestSweeps   2;
+        cacheAgglomeration true;
+        nCellsInCoarsestLevel 10;
+        agglomerator    faceAreaPair;
+        mergeLevels     1;
+    }
+
+    p_rbghFinal
+    {
+        $p_rbgh;
+        tolerance       1e-6;
+        relTol          0;
+    }
+
+    "(k.b|epsilon.b|pa_new_value|alphaPlastic)"
+    {
+	solver          PBiCG;
+        preconditioner  DILU;
         tolerance       1e-5;
         relTol          0;
-        cacheAgglomeration true;
-        nCellsInCoarsestLevel 10;
-        agglomerator    faceAreaPair;
-        mergeLevels     1;
-    }
-    cellDisplacementFinal
-    {
-        $cellDisplacement;
-        relTol          0;
-    }
 
-    p
-    {
-        // Switched from PCG+DIC to GAMG — PCG was hitting 1000 iter limit
-        // before converging (seen in log: "No Iterations 1000").
-        // GAMG converges the pressure Poisson equation 5-10x faster on
-        // structured-ish meshes and has a hard iteration cap via tolerance.
-        solver          GAMG;
-        smoother        DIC;
-        tolerance       1e-6;
-        relTol          0.01;
-        maxIter         200;
-        cacheAgglomeration true;
-        nCellsInCoarsestLevel 10;
-        agglomerator    faceAreaPair;
-        mergeLevels     1;
-    }
-    pFinal
-    {
-        $p;
-        relTol          0;
-        tolerance       1e-6;
-    }
 
-    pcorr
-    {
-        $p;
-        tolerance       1e-4;
-        relTol          0;
-    }
-    pcorrFinal
-    {
-        $pcorr;
-        relTol          0;
-    }
-
-    U
-    {
-        solver          PBiCGStab;
+/*
+        solver          PBiCG;
         preconditioner  DILU;
-        tolerance       1e-7;
-        relTol          0.01;
-    }
-    UFinal
-    {
-        $U;
+        tolerance       1e-15;
         relTol          0;
+*/
     }
-
-    k
-    {
-        solver          PBiCGStab;
-        preconditioner  DILU;
-        tolerance       1e-8;
-        relTol          0.01;
-        minIter         1;
-    }
-    kFinal
-    {
-        $k;
-        relTol          0;
-    }
-
-    omega
-    {
-        solver          PBiCGStab;
-        preconditioner  DILU;
-        tolerance       1e-8;
-        relTol          0.01;
-        minIter         1;
-    }
-    omegaFinal
-    {
-        $omega;
-        relTol          0;
-    }
-
-    Cs
-    {
-        // ROOT CAUSE FIX:
-        // Log showed Min(Cs)=-175, Max(Cs)=4242 — physically impossible.
-        // PBiCGStab + linearUpwind is unbounded near steep scour gradients.
-        // Switch div(phi,Cs) to upwind in fvSchemes (see note below).
-        // Tighten relTol and add minIter to prevent early exit with bad solution.
-        solver          PBiCGStab;
-        preconditioner  DILU;
-        tolerance       1e-7;
-        relTol          0.001;  // tightened from 0.01
-        minIter         2;
-        maxIter         200;
-    }
-    CsFinal
-    {
-        $Cs;
-        relTol          0;
-        tolerance       1e-7;
-    }
-
-    h
-    {
-        solver          PBiCGStab;
+    
+    omega.b
+    {	
+	solver          PBiCG;
         preconditioner  DILU;
         tolerance       1e-9;
-        relTol          0.01;
+        relTol          0;
+
     }
-    hFinal
+
+    "(k.bFinal|epsilon.bFinal|paFinal|alphaPlasticFinal)"
     {
-        $h;
+       solver          PBiCG;
+        preconditioner  DILU;
+        tolerance       1e-5;
+        relTol          0;
+
+    }
+
+    omega.bFinal
+    {
+        solver          PBiCG;
+        preconditioner  DILU;
+        tolerance       1e-9;
+        relTol          0;
+
+    }
+
+    "U.a|U.aFinal"
+    {
+        solver          PBiCG;
+        preconditioner  DILU;
+        tolerance       1e-6;
         relTol          0;
     }
-    yWall
+
+    "U.b|U.bFinal"
     {
-    solver          smoothSolver;
-    smoother        symGaussSeidel;
-    tolerance       1e-8;
-    relTol          0;
+        solver          PBiCG;
+        preconditioner  DILU;
+        tolerance       1e-6;
+        relTol          0;
+    }
+
+    alpha.a
+    {
+        solver          PBiCG;
+        preconditioner  DILU;
+        tolerance       1e-9;
+        relTol          0;
+    }
+    alpha.aFinal
+    {
+        solver          PBiCG;
+        preconditioner  DILU;
+        tolerance       1e-9;
+        relTol          0;
+    }
+    Theta
+    {
+        solver          PBiCG;
+        preconditioner  DILU;
+        tolerance       1e-9;
+        relTol          0;
+    }
+    ThetaFinal
+    {
+        solver          PBiCG;
+        preconditioner  DILU;
+        tolerance       1e-9;
+        relTol          0;
     }
 }
 
-PIMPLE
-{
-    nCorrectors              3;     // increased from 2 — p was not converging
-    nNonOrthogonalCorrectors 3;     // increased from 2 — deforming mesh needs more
-    pRefCell                 0;
-    pRefValue                0;
-
-    correctPhi               yes;
-    moveMeshOuterCorrectors  yes;
-
-    // Prevent PIMPLE continuing with diverged fields
-    // If p residual doesn't drop below this after nCorrectors, abort timestep
-    // and let adjustTimeStep shrink deltaT
-    turbOnFinalIterOnly      true;  // only solve k/omega on final PIMPLE iter
-}
 
 relaxationFactors
 {
     fields
     {
-        p               0.3;
+        pa              1.;
     }
-    equations
-    {
-        U               0.7;
-        k               0.5;        // tightened from 0.7
-        omega           0.5;        // tightened from 0.7
-        Cs              0.3;        // tightened from 0.5 — this is the critical one
-        cellDisplacement 0.5;
-    }
+}
+
+PIMPLE
+{
+    nCorrectors     2;
+    nNonOrthogonalCorrectors 1;
+    nAlphaCorr      1;
+    correctAlpha    yes;
+    pRefPoint       (0.9999 0.2049 0.0);
+    //pRefCell       0;
+    pRefValue       0;
 }
 
 // ************************************************************************* //

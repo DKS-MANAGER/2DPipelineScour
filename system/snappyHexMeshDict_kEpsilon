@@ -33,36 +33,43 @@ geometry
         type triSurfaceMesh;
         name cylinder;
     }
+   
 	surface1 // avant seuil
     {
         type searchableBox;
         min (-0.03  -0.015    0.0 );
         max ( 0.1   0.06     0.001);
 	}
+
         surface2
      {
         type searchableBox;
         min (-0.75    -0.03  0.0     );
         max ( 1.6  -0.02  0.001   );
         }
+
         surface3 
      {
         type searchableBox;
         min (-0.1    -0.045  0.0     );
         max ( 0.2   -0.015  0.001   );
         }
+
         surface4
     {
         type searchableBox;
         min ( -0.07  -0.06	  0.0     );
         max (  0.12  -0.04  0.001   );
         }
+
+
         surface5
     {
         type searchableBox;
         min ( -0.06  -0.075  0.0     );
         max (  0.07  -0.05  0.001   );
         }
+
 	surface6
     {
         type searchableBox;
@@ -80,12 +87,6 @@ geometry
         type searchableBox;
         min (  -0.75  -0.045  0.0     );
         max (  -0.5   -0.025  0.001   );
-        }
-        surface9
-    {
-        type searchableBox;
-        min (  0.2 -0.015  0.0     );
-        max (  0.35  0.015  0.001   );
         }
 };
 
@@ -124,30 +125,35 @@ castellatedMeshControls
    
         
         surface1
-         {
+        {
             mode inside;
             levels ((1E15 2));//1
-         }
+        }
        surface2
-        {
+       {
            mode inside;
            levels ((1E15 2));//1
-        }
+       }
+
        surface3
         {
             mode inside;
             levels ((1E15 2));//1
         }
+
+
        surface4
         {
             mode inside;
             levels ((1E15 2));//1
         }
+
        surface5
         {
             mode inside;
             levels ((1E15 2));//1
         }
+
        surface6
         {
             mode inside;
@@ -159,11 +165,6 @@ castellatedMeshControls
             levels ((1E15 1));//1
         }
        surface8
-        {
-            mode inside;
-            levels ((1E15 2));//1
-        }
-       surface9
         {
             mode inside;
             levels ((1E15 2));//1
@@ -200,14 +201,14 @@ addLayersControls
     {
         "(cylinder).*"
         {
-            nSurfaceLayers 20;// nb de couches à ajouter prés des parois
+            nSurfaceLayers 5;// nb de couches à ajouter prés des parois
         }
     }
 
    // thickness 0.01;
-    expansionRatio 1.19;
+    expansionRatio 1.01;
     //finalLayerThickness 0.0007;
-    firstLayerThickness 0.00002;
+    firstLayerThickness 0.0006;
     minThickness 0.00000001;
 
     nGrow 0;
@@ -229,15 +230,12 @@ addLayersControls
 
     minMedianAxisAngle 90;
 
-    minMedialAxisAngle 90;
 
     nBufferCellsNoExtrude 0;
 
 
     nLayerIter 50;
 }
-
-
 
 meshQualityControls
 {
